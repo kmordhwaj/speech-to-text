@@ -5,3 +5,6 @@
 - `pip install flask`
 - `pip install SpeechRecognition`
 - `pip install pyaudio`
+
+## Run
+- `python app.py`
