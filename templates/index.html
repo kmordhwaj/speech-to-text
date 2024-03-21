@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Self-Driving Car</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body style="background-color: black; color: aliceblue;" >
+    <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+    <h1>Self-Driving Car</h1>
+    <div id="car-status">
+        <p id="status">Stopped</p>
+        <img id="car-image" src="{{ url_for('static', filename='car-stopped.png') }}" alt="Car Image">
+        <p id="recognized-text">Recognized Text: </p> <!-- Modified to include recognized text -->
+    </div>
+    <button onclick="startListening()" style="cursor: pointer;">Start Listening</button>
+    </div>
+    <script>
+        function updateCarStatus(keyword, recognizedText) { // Updated function to accept recognized text
+            var status = document.getElementById("status");
+            var carImage = document.getElementById("car-image");
+            var recognizedTextElement = document.getElementById("recognized-text");
+            if (keyword == "start") {
+                status.innerHTML = "Running";
+                carImage.src = "{{ url_for('static', filename='car-moving.gif') }}";
+            } else if (keyword == "stop") {
+                status.innerHTML = "Stopped";
+                carImage.src = "{{ url_for('static', filename='car-stopped.png') }}";
+            }
+            recognizedTextElement.innerHTML = "Recognized Text: " + recognizedText; // Update recognized text
+        }
+
+        function checkSpeechRecognition() {
+            $.get("/speech_recognition", function(response) {
+                var keyword = response.keyword;
+                var text = response.text;
+                console.log(response.keyword);
+                console.log(response.text);
+                updateCarStatus(keyword, text); // Pass recognized text to updateCarStatus
+                setTimeout(checkSpeechRecognition, 1000); // Check every second
+            });
+        }
+
+        function startListening() {
+            navigator.mediaDevices.getUserMedia({ audio: true })
+            .then(function(stream) {
+                checkSpeechRecognition();
+            })
+            .catch(function(err) {
+                console.log('Error accessing microphone:', err);
+            });
+        }
+
+        $(document).ready(function() {
+            // Don't start listening automatically on page load
+            // checkSpeechRecognition();
+        });
+    </script>
+</body>
+</html>
