@@ -1,4 +1,7 @@
-# Install
-pip install flask
-pip install pyadio
-pip install SpeechRecognition
+## About
+- A simple Speech-to-text application using Flask.
+
+## Install
+- `pip install flask`
+- `pip install SpeechRecognition`
+- `pip install pyaudio`
